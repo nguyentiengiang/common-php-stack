@@ -3,7 +3,7 @@ version: "3.9"
 services:
   php_sample:
     build: ./env
-    image: vmo/php-sample
+    image: nguyentiengiang/php-sample
     container_name: php_sample
     restart: always
     volumes:
