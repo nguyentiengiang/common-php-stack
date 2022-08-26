@@ -1,0 +1,12 @@
+[mysqld]
+character-set-server=utf8mb4
+collation-server=utf8mb4_unicode_ci
+max_allowed_packet=256M
+default_time_zone='+07:00'
+
+skip-log-bin
+general_log=1
+general_log_file=/var/log/mysql/queries.log
+log_error=/var/log/mysql/error.log
+slow_query_log = 1
+slow_query_log_file=/var/log/mysql/slow.log

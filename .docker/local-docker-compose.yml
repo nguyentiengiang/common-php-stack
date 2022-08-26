@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  php_sample:
+    build: ./env
+    image: vmo/php-sample
+    container_name: php_sample
+    restart: always
+    volumes:
+      - ./env/nginx:/etc/nginx/sites-available
+      - ./env/cert:/etc/nginx/ssl
+      - ./env/startup.sh:/startup.sh
+      - ./env/web-schedule:/etc/cron.d/web-schedule
+      - ./env/php.ini:/etc/php/8.1/fpm/php.ini
+      - ../.logs/nginx:/var/log/nginx
+      - ../:/var/www/html
+    ports:
+      - 80:80
+      - 443:443
+      - 3000:3000
+    networks:
+      - php_network
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb_sample
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./env/db_conf:/etc/mysql/conf.d
+      - ../.logs/db:/var/log/mysql
+      - db_volume:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=dev_sample
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev@1234
+      - MYSQL_ROOT_PASSWORD=vmo@2025
+    networks:
+      - php_network
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer_sample
+    restart: always
+    ports:
+      - 8081:8080
+    environment:
+      - ADMINER_DESIGN=pepa-linha
+      - ADMINER_PLUGINS=tables-filter tinymce
+      - ADMINER_DEFAULT_SERVER=mariadb
+    networks:
+      - php_network
+
+networks:
+  php_network:
+    driver: bridge
+
+volumes:
+  db_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/d/project_db/
+      o: bind
